@@ -40,7 +40,7 @@ export const aboutContent = {
     'Access Scotland exists to connect Americans and Scots for the purpose of seeing multitudes turn to Christ and walk closely with Him.',
   paragraphs: [
     'We are not pastors. We simply love the Lord, we love people, and we love Scotland.',
-    'Subscribe at the bottom of the page to receive our updates.',
+    'Use the contact form at the bottom of the page to start a conversation with us.',
   ],
   image:
     'https://static.wixstatic.com/media/2bcc6e_f81ed12b13f3405a9c287d3c257f2d13~mv2.jpg/v1/crop/x_139,y_842,w_1939,h_1851/fill/w_900,h_860,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/IMG_3165_edited_edited.jpg',
@@ -222,7 +222,7 @@ export const albums = [
     date: 'September 2021',
     photosCount: 62,
     summary:
-      'A modernized static gallery preview with the imagery laid out for a later CMS or Google Drive-backed migration.',
+      'A modernized static gallery preview with the imagery laid out for a later admin-managed media workflow.',
     cover:
       'https://static.wixstatic.com/media/2bcc6e_1fc8ddce9f5145f08025d3b544a6c16d~mv2.png/v1/fill/w_900,h_640,fp_0.50_0.50,q_85,usm_0.66_1.00_0.01/2bcc6e_1fc8ddce9f5145f08025d3b544a6c16d~mv2.png',
     archiveUrl: 'https://www.first-trip-on-our-ow.accessscotland.com',

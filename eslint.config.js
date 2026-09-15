@@ -18,4 +18,15 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    files: [
+      'vite.config.js',
+      'netlify/**/*.{js,mjs}',
+      'src/server/**/*.js',
+      'tests/**/*.js',
+    ],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])

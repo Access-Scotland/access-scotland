@@ -426,7 +426,7 @@
 .roadmap-card,
 .more-card,
 .site-footer__intro,
-.mailing-form,
+.contact-form,
 .site-footer__contacts {
   border: 1px solid var(--line);
   border-radius: 1.6rem;
@@ -779,7 +779,7 @@
 }
 
 .site-footer__intro,
-.mailing-form,
+.contact-form,
 .site-footer__contacts {
   padding: 1.25rem;
 }
@@ -790,17 +790,24 @@
   gap: 0.7rem;
 }
 
-.mailing-form {
+.contact-form {
   display: grid;
   gap: 0.8rem;
 }
 
-.mailing-form label {
+.contact-form__row,
+.contact-form__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.contact-form label {
   font-weight: 800;
   color: var(--text-strong);
 }
 
-.mailing-form input {
+.contact-form input,
+.contact-form textarea {
   width: 100%;
   min-height: 3rem;
   padding: 0.78rem 1rem;
@@ -811,11 +818,48 @@
   font: inherit;
 }
 
-.mailing-note,
+.contact-form textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.contact-form .button {
+  width: 100%;
+}
+
+.contact-form .button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+  transform: none;
+}
+
+.form-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.turnstile-shell {
+  min-height: 65px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.form-status,
 .site-footer__contacts span,
 .site-footer__copyright {
   color: var(--text-muted);
   font-size: 0.95rem;
+}
+
+.form-status--success {
+  color: #37634e;
+}
+
+.form-status--error {
+  color: #963b32;
 }
 
 .site-footer__contacts a {
@@ -1090,6 +1134,10 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
     padding: 1.2rem 1.75rem 4.5rem;
+  }
+
+  .contact-form__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

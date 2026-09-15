@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import ContactForm from './components/ContactForm'
 import {
   aboutContent,
   albums,
@@ -25,7 +26,6 @@ function SectionHeading({ eyebrow, title, body, align = 'left' }) {
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [mailingSubmitted, setMailingSubmitted] = useState(false)
   const [lightbox, setLightbox] = useState(null)
 
   const activeAlbum = lightbox
@@ -102,11 +102,6 @@ function App() {
 
   const closeMenu = () => setIsMenuOpen(false)
 
-  const submitMailingForm = (event) => {
-    event.preventDefault()
-    setMailingSubmitted(true)
-  }
-
   return (
     <div className="page-shell">
       <header className="site-header">
@@ -143,8 +138,8 @@ function App() {
             </nav>
 
             <div className="site-nav-secondary">
-              <a href="#mailing-list" onClick={closeMenu}>
-                Mailing List
+              <a href="#contact" onClick={closeMenu}>
+                Contact
               </a>
               <a
                 href={moreLinks[1].href}
@@ -158,7 +153,7 @@ function App() {
           </div>
 
           <div className="header-utility">
-            <a href="#mailing-list">Mailing List</a>
+            <a href="#contact">Contact</a>
             <a href={moreLinks[1].href} target="_blank" rel="noreferrer">
               Live Blog
             </a>
@@ -379,7 +374,7 @@ function App() {
             <SectionHeading
               eyebrow="Albums"
               title="A smoother gallery browse now, with future admin management in mind."
-              body="This first React pass keeps the photo gallery functionality alive with static data now, while leaving room for a later Google Drive-backed structure."
+              body="This first React pass keeps the photo gallery functionality alive with static data now, while leaving room for a later admin-managed media structure."
               align="center"
             />
 
@@ -431,12 +426,12 @@ function App() {
 
             <div className="roadmap-card">
               <p className="section-eyebrow">Phase two</p>
-              <h3>Gallery management that mirrors Google Drive folders.</h3>
+              <h3>Gallery management that keeps albums easy to update.</h3>
               <p>
                 The gallery data in this prototype is already shaped like
                 content records. That makes it straightforward to swap the
-                static objects for a future admin source, including a Google
-                Drive-based folder structure if that becomes the chosen path.
+                static objects for a future admin source when the final media
+                workflow is ready.
               </p>
             </div>
           </section>
@@ -463,35 +458,17 @@ function App() {
         </div>
       </main>
 
-      <footer className="site-footer" id="mailing-list">
+      <footer className="site-footer" id="contact">
         <div className="site-footer__intro">
-          <p className="section-eyebrow">Join our mailing list</p>
-          <h2>Keep the call to Scotland front and center.</h2>
+          <p className="section-eyebrow">Contact Access Scotland</p>
+          <h2>Start a conversation about Scotland.</h2>
           <p>
-            The original Wix subscribe form is visually preserved here, but the
-            backend integration will need to be reconnected separately in the
-            production build.
+            Whether you are exploring a mission partnership, planning a retreat,
+            or simply want to learn more, we would be glad to hear from you.
           </p>
         </div>
 
-        <form className="mailing-form" onSubmit={submitMailingForm}>
-          <label htmlFor="mailing-email">Email address</label>
-          <input
-            id="mailing-email"
-            name="email"
-            type="email"
-            placeholder="Enter your email here*"
-            required
-          />
-          <button type="submit" className="button button--solid">
-            Subscribe now
-          </button>
-          <p className="mailing-note">
-            {mailingSubmitted
-              ? 'Thanks for your interest. The real mailing-list hookup is planned for the next phase.'
-              : 'Prototype note: this confirms intent for now and can be wired to the final email platform later.'}
-          </p>
-        </form>
+        <ContactForm />
 
         <div className="site-footer__contacts">
           <p className="section-eyebrow">Contact</p>
