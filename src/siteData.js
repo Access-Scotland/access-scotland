@@ -30,7 +30,6 @@ export const navLinks = [
   { href: '#missions', label: 'Missions' },
   { href: '#retreats', label: 'Retreats' },
   { href: '#albums', label: 'Albums' },
-  { href: '#more', label: 'More' },
 ]
 
 export const aboutContent = {
@@ -246,29 +245,5 @@ export const albums = [
       'https://static.wixstatic.com/media/60cca8_ccfb6fdb5ffc44f1b022217f0f7ec50f~mv2.png/v1/fit/w_856,h_383,q_90,enc_avif,quality_auto/60cca8_ccfb6fdb5ffc44f1b022217f0f7ec50f~mv2.png',
     archiveUrl: 'https://www.second-mission-trip.accessscotland.com',
     photos: [],
-  },
-]
-
-export const moreLinks = [
-  {
-    title: 'Our Journey',
-    description:
-      'The current site also shares a longer timeline of the ministry journey, including the move toward full-time work in Scotland and the purchase of an old Scottish inn as a ministry centerpiece.',
-    href: 'https://www.accessscotland.com/about-axs',
-    cta: 'Read the journey',
-  },
-  {
-    title: 'Blog',
-    description:
-      'Access Scotland already has a live blog on the existing site, including posts like "Beginnings | One" by Rebecca Lindsey.',
-    href: 'https://www.accessscotland.com/blog',
-    cta: 'Open the blog',
-  },
-  {
-    title: 'Calendar',
-    description:
-      'The existing Wix calendar remains the source of truth for dates and events until a dedicated events approach is chosen for the React build.',
-    href: 'https://www.accessscotland.com/calendar',
-    cta: 'View the calendar',
   },
 ]

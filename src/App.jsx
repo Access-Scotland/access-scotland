@@ -8,7 +8,6 @@ import {
   founders,
   heroHighlights,
   missionContent,
-  moreLinks,
   navLinks,
   partners,
   retreatsContent,
@@ -141,22 +140,11 @@ function App() {
               <a href="#contact" onClick={closeMenu}>
                 Contact
               </a>
-              <a
-                href={moreLinks[1].href}
-                target="_blank"
-                rel="noreferrer"
-                onClick={closeMenu}
-              >
-                Live Blog
-              </a>
             </div>
           </div>
 
           <div className="header-utility">
             <a href="#contact">Contact</a>
-            <a href={moreLinks[1].href} target="_blank" rel="noreferrer">
-              Live Blog
-            </a>
           </div>
         </div>
       </header>
@@ -436,25 +424,6 @@ function App() {
             </div>
           </section>
 
-          <section className="content-section content-section--support" id="more">
-            <SectionHeading
-              eyebrow="More"
-              title="Supporting pages stay present while the core experience gets sharper."
-              body="These links keep the rest of the ministry story visible so the React rebuild can modernize the main experience without dropping existing information."
-            />
-
-            <div className="more-grid">
-              {moreLinks.map((item) => (
-                <article key={item.title} className="more-card">
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                  <a href={item.href} target="_blank" rel="noreferrer">
-                    {item.cta}
-                  </a>
-                </article>
-              ))}
-            </div>
-          </section>
         </div>
       </main>
 

@@ -338,8 +338,7 @@
   padding: 3.5rem 1.25rem;
 }
 
-.content-section--mission,
-.content-section--support {
+.content-section--mission {
   border-radius: 2rem;
 }
 
@@ -349,13 +348,6 @@
     radial-gradient(circle at top left, rgba(206, 220, 223, 0.14), transparent 24rem),
     linear-gradient(155deg, #203744, #122129 62%, #0d181d);
   box-shadow: 0 28px 60px rgba(12, 24, 30, 0.2);
-}
-
-.content-section--support {
-  background:
-    linear-gradient(180deg, rgba(205, 217, 220, 0.42), rgba(255, 255, 255, 0.45)),
-    rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(20, 35, 43, 0.08);
 }
 
 .section-heading {
@@ -383,7 +375,6 @@
 .retreat-mode h3,
 .album-card h3,
 .roadmap-card h3,
-.more-card h3,
 .lightbox__topbar h3 {
   margin: 0;
 }
@@ -424,7 +415,6 @@
 .retreat-destinations,
 .album-card,
 .roadmap-card,
-.more-card,
 .site-footer__intro,
 .contact-form,
 .site-footer__contacts {
@@ -492,8 +482,7 @@
 }
 
 .founder-card h3,
-.album-card h3,
-.more-card h3 {
+.album-card h3 {
   margin: 0;
   font-size: 1.2rem;
 }
@@ -688,8 +677,7 @@
   padding-bottom: 4.5rem;
 }
 
-.album-grid,
-.more-grid {
+.album-grid {
   display: grid;
   gap: 1rem;
 }
@@ -740,20 +728,6 @@
 .roadmap-card h3,
 .roadmap-card .section-eyebrow {
   color: var(--white);
-}
-
-.more-card {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 0.75rem;
-  padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.more-card a {
-  color: var(--slate-800);
-  text-decoration: none;
-  font-weight: 800;
 }
 
 .site-footer {
@@ -985,8 +959,7 @@
 .founder-card:hover,
 .partner-card:hover,
 .retreat-mode:hover,
-.album-card:hover,
-.more-card:hover {
+.album-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 24px 44px rgba(16, 33, 41, 0.12);
 }
@@ -1124,10 +1097,6 @@
 
   .album-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .more-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .site-footer {
