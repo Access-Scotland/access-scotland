@@ -20,6 +20,7 @@ function ContactForm() {
   const [formData, setFormData] = useState(emptyForm)
   const [website, setWebsite] = useState('')
   const [turnstileToken, setTurnstileToken] = useState('')
+  const [turnstileError, setTurnstileError] = useState('')
   const [status, setStatus] = useState('idle')
   const [feedback, setFeedback] = useState(
     'We typically respond within two business days.',
@@ -49,9 +50,18 @@ function ContactForm() {
           sitekey: TURNSTILE_SITE_KEY,
           action: 'contact',
           theme: 'light',
-          callback: setTurnstileToken,
+          callback: (token) => {
+            setTurnstileToken(token)
+            setTurnstileError('')
+          },
           'expired-callback': () => setTurnstileToken(''),
-          'error-callback': () => setTurnstileToken(''),
+          'error-callback': (errorCode) => {
+            setTurnstileToken('')
+            setTurnstileError(
+              `Security check unavailable (Cloudflare error ${errorCode}). Please refresh the page and try again.`,
+            )
+            return true
+          },
         },
       )
     }
@@ -223,7 +233,14 @@ function ContactForm() {
       </div>
 
       {TURNSTILE_SITE_KEY ? (
-        <div className="turnstile-shell" ref={turnstileContainer}></div>
+        <>
+          <div className="turnstile-shell" ref={turnstileContainer}></div>
+          {turnstileError ? (
+            <p className="form-status form-status--error" role="alert">
+              {turnstileError}
+            </p>
+          ) : null}
+        </>
       ) : null}
 
       <button

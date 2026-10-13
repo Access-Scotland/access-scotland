@@ -54,6 +54,17 @@ CONTACT_TURNSTILE_REQUIRED=true
 can remain the domain registrar and DNS manager; Turnstile does not require
 moving DNS to Cloudflare.
 
+Also add the deployed `.netlify.app` hostname to the widget in **Cloudflare >
+Turnstile > your widget > Settings > Hostname Management**. Enter only the
+hostname, without `https://` or a path. This Cloudflare setting authorizes the
+browser widget; `TURNSTILE_EXPECTED_HOSTNAMES` separately checks the hostname
+after token validation on the server. Confirm `VITE_TURNSTILE_SITE_KEY` in
+Netlify matches that widget's site key, not its secret key. Redeploy after
+changing `VITE_TURNSTILE_SITE_KEY` because Vite embeds it during the build.
+If the widget displays “Troubleshoot,” the form now shows the Cloudflare error
+code: `110200` means the hostname is not authorized, while `110100`, `110110`,
+or `400020` indicate a site key problem.
+
 Upstash settings in `.env.example` are optional. Without them, rate limits use
 the Netlify Function instance's in-memory store, while Turnstile and the
 honeypot still protect the form.
