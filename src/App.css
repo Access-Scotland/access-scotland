@@ -586,9 +586,14 @@
   color: rgba(242, 246, 245, 0.7);
 }
 
-.retreat-hero,
+.retreat-hero {
+  align-items: start;
+}
+
 .retreat-visuals {
   align-items: start;
+  gap: 1.35rem;
+  margin-top: 2rem;
 }
 
 .retreat-overview,
@@ -639,7 +644,7 @@
 .retreat-gallery {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 0.9rem;
 }
 
 .retreat-gallery__item {
@@ -651,6 +656,7 @@
 }
 
 .retreat-gallery__item img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -658,7 +664,13 @@
 
 .retreat-destinations {
   display: grid;
-  gap: 0.9rem;
+  align-content: start;
+  gap: 1rem;
+  padding: 1.35rem;
+}
+
+.retreat-destinations h3 {
+  max-width: 25ch;
 }
 
 .destination-grid {
@@ -1089,6 +1101,9 @@
 
   .retreat-visuals {
     grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+    align-items: stretch;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
   }
 
   .retreat-gallery {

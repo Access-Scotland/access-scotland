@@ -338,13 +338,18 @@ function App() {
               <div className="retreat-gallery">
                 {retreatsContent.gallery.map((photo) => (
                   <figure key={photo.src} className="retreat-gallery__item">
-                    <img src={photo.src} alt={photo.alt} />
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </figure>
                 ))}
               </div>
 
               <aside className="retreat-destinations">
-                <p className="section-eyebrow">Possible highlights</p>
+                <p className="section-eyebrow">Highlights</p>
                 <h3>Landmarks and landscapes that can anchor the itinerary.</h3>
 
                 <div className="destination-grid">
