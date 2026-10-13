@@ -4,6 +4,8 @@
 
 [build.environment]
   NODE_VERSION = "22.12.0"
+  # These values are browser-visible or ordinary configuration, not credentials.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_TURNSTILE_SITE_KEY,TURNSTILE_EXPECTED_ACTION,TURNSTILE_EXPECTED_HOSTNAMES,CONTACT_TURNSTILE_REQUIRED,RESEND_FROM_EMAIL,CONTACT_RECIPIENT_EMAILS"
 
 [functions]
   directory = "netlify/functions"

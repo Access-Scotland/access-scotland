@@ -58,6 +58,10 @@ Upstash settings in `.env.example` are optional. Without them, rate limits use
 the Netlify Function instance's in-memory store, while Turnstile and the
 honeypot still protect the form.
 
+Do not add the optional Upstash or `CONTACT_*` tuning variables to Netlify
+unless they are intentionally being configured. The defaults in the contact
+handler are appropriate for the initial small-traffic deployment.
+
 ## Current notes
 
 - The gallery is currently powered by static data in `src/siteData.js`.
