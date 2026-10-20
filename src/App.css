@@ -859,6 +859,15 @@
   margin-top: 0.2rem;
 }
 
+.site-footer__contacts .site-footer__admin-link {
+  width: fit-content;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
 .lightbox {
   position: fixed;
   inset: 0;

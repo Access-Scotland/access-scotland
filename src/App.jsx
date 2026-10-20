@@ -453,6 +453,9 @@ function App() {
             </a>
           ))}
           <p className="site-footer__copyright">© 2022 Access Scotland.</p>
+          <a className="site-footer__admin-link" href="/admin">
+            Admin sign in
+          </a>
         </div>
       </footer>
 

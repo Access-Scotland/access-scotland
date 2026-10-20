@@ -73,6 +73,29 @@ Do not add the optional Upstash or `CONTACT_*` tuning variables to Netlify
 unless they are intentionally being configured. The defaults in the contact
 handler are appropriate for the initial small-traffic deployment.
 
+## Admin sign in
+
+The `/admin` page uses Netlify Identity for email/password login, invitations,
+password recovery, and sign-out. A Netlify Function checks the signed-in user's
+`admin` role before returning an admin session. Future photo-management
+functions must use the same server-side role check in `src/server/admin-auth.js`.
+
+To enable it on the client's Netlify project:
+
+1. Open **Identity** for the project and select **Enable Identity**.
+2. Under **Project configuration > Identity > Registration**, set registration
+   to **Invite only**.
+3. Under **Identity > Users**, invite each admin by email. These are site
+   Identity users, not Netlify team members.
+4. Open each user's Identity record and assign the role `admin` (lowercase).
+5. Push and deploy this code, then open `/admin`. Invitation and password-reset
+   links may land on the home URL; the app routes their tokens to `/admin`.
+
+No new environment variables are needed. A normal `npm run dev` session can
+show the admin page, but it cannot authenticate without Netlify Identity's
+runtime. Test the full login flow on the deployed Netlify site after enabling
+Identity. Role changes take effect on the user's next login or token refresh.
+
 ## Current notes
 
 - The gallery is currently powered by static data in `src/siteData.js`.

@@ -84,6 +84,11 @@ input:focus-visible {
   overflow-x: clip;
 }
 
+.admin-boot {
+  padding: 2rem;
+  color: var(--text-strong);
+}
+
 h1,
 h2,
 h3 {
