@@ -213,7 +213,10 @@ function AdminApp() {
       <section className="admin-layout" aria-labelledby="admin-heading">
         <div
           className="admin-landscape"
-          style={{ backgroundImage: `url(${brand.heroImage})` }}
+          style={{
+            '--hero-image': `url(${brand.heroImage})`,
+            '--hero-mobile-image': `url(${brand.heroMobileImage})`,
+          }}
         >
           <div className="admin-landscape__content">
             <a className="admin-brand" href="/" aria-label="Access Scotland home">
@@ -357,11 +360,8 @@ function AdminApp() {
               <div className="admin-next-step">
                 <span className="admin-next-step__number">01</span>
                 <div>
-                  <strong>Photo management comes next</strong>
-                  <p>
-                    This is the secure starting point for managing albums and
-                    site images in a later phase.
-                  </p>
+                  <strong>Site management is coming later</strong>
+                  <p>Photos are currently published with the site. This sign-in is reserved for future editing tools.</p>
                 </div>
               </div>
               <button

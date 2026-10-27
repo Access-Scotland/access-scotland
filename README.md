@@ -77,8 +77,8 @@ handler are appropriate for the initial small-traffic deployment.
 
 The `/admin` page uses Netlify Identity for email/password login, invitations,
 password recovery, and sign-out. A Netlify Function checks the signed-in user's
-`admin` role before returning an admin session. Future photo-management
-functions must use the same server-side role check in `src/server/admin-auth.js`.
+`admin` role before returning an admin session. The dashboard does not edit or
+upload photos in this static phase.
 
 To enable it on the client's Netlify project:
 
@@ -96,9 +96,44 @@ show the admin page, but it cannot authenticate without Netlify Identity's
 runtime. Test the full login flow on the deployed Netlify site after enabling
 Identity. Role changes take effect on the user's next login or token refresh.
 
+## Static photos
+
+The site uses optimized files in `public/media/`. Netlify publishes them with
+the site; no media API, storage credentials, or Wix image requests are needed.
+Gallery thumbnails and the mobile hero have smaller dedicated files. The
+source folders on Desktop are not modified by the import.
+
+To reprocess local source folders on macOS:
+
+```bash
+node scripts/optimize-static-media.mjs /path/to/albums /path/to/assets
+```
+
+The script requires the built-in macOS `sips` command. It writes optimized
+photos to `public/media/albums/<slug>/photos/`, thumbnails to `thumbs/`, a
+cover from an album photo when one does not already exist, and site images to
+`public/media/assets/`. Existing covers are preserved on reruns, including
+the three original Wix covers recovered separately.
+It also refreshes small thumbnails for every photo already in the retreat
+gallery, including the 12 additional Wix photos recovered into `public/media/`.
+When adding a new album, update `src/siteData.js` with its title, date, original
+photo count, and local paths, then rebuild and deploy. Remove any obsolete
+files from `public/media/` when an album is retired; the importer does not
+delete files automatically. Photos on a public site can be viewed and saved
+by visitors.
+
+After deploying this version, remove the unused `R2_*` variables from Netlify
+and revoke the old R2 API token in Cloudflare. The bucket can then be deleted
+by the account owner once no other project uses it.
+
 ## Current notes
 
-- The gallery is currently powered by static data in `src/siteData.js`.
-- `Second Mission Trip` still links to the live archive while that album import is unfinished.
+- Only six photos are available for each of `First Trip`, `Pastor Vision Tour`,
+  and `First Trip on Our Own`; their current Wix archives list 91, 108, and 98.
+- `Second Mission Trip` has its original cover, but no recovered interior
+  photos; the original archive lists 77 photos.
+- All 18 public Retreats page photos are local. The page shows six in its
+  collage and opens the complete set in a lightbox.
+- Review the old Wix site later for missing photos and any other omitted content.
 - The contact form is implemented and needs the production Resend and Turnstile environment values before launch.
-- A future admin/photo-management flow can be layered in without rebuilding the front end structure.
+- The existing sign-in remains available, but photo and copy editing require a later admin implementation.

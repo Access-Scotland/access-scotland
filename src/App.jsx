@@ -13,6 +13,17 @@ import {
   retreatsContent,
 } from './siteData'
 
+const retreatPhotos = [...retreatsContent.gallery, ...retreatsContent.morePhotos]
+const retreatAlbum = {
+  slug: 'retreats',
+  title: 'Retreats in Scotland',
+  photos: retreatPhotos.map((photo) => photo.src),
+}
+
+const thumbnailFor = (photo) => photo.includes('/retreat-gallery/')
+  ? photo.replace('/retreat-gallery/', '/retreat-gallery/thumbs/')
+  : photo.replace('/photos/', '/thumbs/')
+
 function SectionHeading({ eyebrow, title, body, align = 'left' }) {
   return (
     <div className={`section-heading section-heading--${align}`}>
@@ -28,12 +39,18 @@ function App() {
   const [lightbox, setLightbox] = useState(null)
 
   const activeAlbum = lightbox
-    ? albums.find((album) => album.slug === lightbox.albumSlug)
+    ? lightbox.albumSlug === 'retreats'
+      ? retreatAlbum
+      : albums.find((album) => album.slug === lightbox.albumSlug)
     : null
   const activePhoto = activeAlbum?.photos[lightbox?.photoIndex ?? 0]
+  const activePhotoCount = activeAlbum?.photos.length ?? 0
+  const activePhotoAlt = lightbox?.albumSlug === 'retreats'
+    ? retreatPhotos[lightbox.photoIndex]?.alt
+    : `${activeAlbum?.title} photo ${(lightbox?.photoIndex ?? 0) + 1}`
 
   useEffect(() => {
-    if (!activeAlbum) {
+    if (!activePhotoCount) {
       document.body.style.overflow = ''
       return undefined
     }
@@ -49,7 +66,7 @@ function App() {
             ? {
                 ...current,
                 photoIndex:
-                  (current.photoIndex + 1) % activeAlbum.photos.length,
+                  (current.photoIndex + 1) % activePhotoCount,
               }
             : current,
         )
@@ -61,8 +78,8 @@ function App() {
             ? {
                 ...current,
                 photoIndex:
-                  (current.photoIndex - 1 + activeAlbum.photos.length) %
-                  activeAlbum.photos.length,
+                  (current.photoIndex - 1 + activePhotoCount) %
+                  activePhotoCount,
               }
             : current,
         )
@@ -76,11 +93,9 @@ function App() {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [activeAlbum])
+  }, [activePhotoCount])
 
-  const openGallery = (albumSlug, photoIndex = 0) => {
-    setLightbox({ albumSlug, photoIndex })
-  }
+  const openGallery = (albumSlug) => setLightbox({ albumSlug, photoIndex: 0 })
 
   const stepLightbox = (direction) => {
     if (!activeAlbum) {
@@ -153,7 +168,10 @@ function App() {
         <section className="hero-shell" id="home">
           <div
             className="hero-media"
-            style={{ backgroundImage: `url(${brand.heroImage})` }}
+            style={{
+              '--hero-image': `url(${brand.heroImage})`,
+              '--hero-mobile-image': `url(${brand.heroMobileImage})`,
+            }}
           ></div>
           <div className="hero-scrim"></div>
           <div className="hero-haze"></div>
@@ -204,6 +222,8 @@ function App() {
                   className="story-card__image"
                   src={aboutContent.image}
                   alt="Access Scotland founders and ministry life in Scotland"
+                  loading="lazy"
+                  decoding="async"
                 />
 
                 <div className="story-card__body">
@@ -221,6 +241,8 @@ function App() {
                       <img
                         src={founder.image}
                         alt={founder.name}
+                        loading="lazy"
+                        decoding="async"
                         style={
                           founder.imagePosition
                             ? { objectPosition: founder.imagePosition }
@@ -335,17 +357,26 @@ function App() {
             </div>
 
             <div className="retreat-visuals">
-              <div className="retreat-gallery">
-                {retreatsContent.gallery.map((photo) => (
-                  <figure key={photo.src} className="retreat-gallery__item">
-                    <img
-                      src={photo.src}
-                      alt={photo.alt}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </figure>
-                ))}
+              <div className="retreat-gallery-wrap">
+                <div className="retreat-gallery">
+                  {retreatsContent.gallery.map((photo) => (
+                    <figure key={photo.src} className="retreat-gallery__item">
+                      <img
+                        src={photo.src}
+                        alt={photo.alt}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </figure>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="button button--ghost retreat-gallery__all"
+                  onClick={() => openGallery('retreats')}
+                >
+                  View all {retreatPhotos.length} photos
+                </button>
               </div>
 
               <aside className="retreat-destinations">
@@ -366,19 +397,23 @@ function App() {
           <section className="content-section albums-section" id="albums">
             <SectionHeading
               eyebrow="Albums"
-              title="A smoother gallery browse now, with future admin management in mind."
-              body="This first React pass keeps the photo gallery functionality alive with static data now, while leaving room for a later admin-managed media structure."
+              title="Moments from the journey, gathered in one place."
+              body="Explore the galleries below. New albums can be added as more stories unfold."
               align="center"
             />
 
             <div className="album-grid">
               {albums.map((album) => (
                 <article key={album.slug} className="album-card">
-                  <img src={album.cover} alt={album.title} />
+                  {album.cover ? (
+                    <img src={album.cover} alt={album.title} loading="lazy" decoding="async" />
+                  ) : (
+                    <div className="album-card__placeholder" aria-hidden="true">Archive pending</div>
+                  )}
 
                   <div className="album-card__body">
                     <p className="album-card__meta">
-                      {album.date} · {album.photosCount} photos
+                      {album.date} · {album.photos.length} of {album.photosCount} photos available
                     </p>
                     <h3>{album.title}</h3>
                     <p>{album.summary}</p>
@@ -393,40 +428,14 @@ function App() {
                           Open gallery
                         </button>
                       ) : (
-                        <a
-                          className="button button--solid"
-                          href={album.archiveUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          View live archive
-                        </a>
+                        <span className="album-card__status">Gallery coming soon</span>
                       )}
-
-                      <a
-                        className="button button--ghost"
-                        href={album.archiveUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Original album
-                      </a>
                     </div>
                   </div>
                 </article>
               ))}
             </div>
 
-            <div className="roadmap-card">
-              <p className="section-eyebrow">Phase two</p>
-              <h3>Gallery management that keeps albums easy to update.</h3>
-              <p>
-                The gallery data in this prototype is already shaped like
-                content records. That makes it straightforward to swap the
-                static objects for a future admin source when the final media
-                workflow is ready.
-              </p>
-            </div>
           </section>
 
         </div>
@@ -506,7 +515,7 @@ function App() {
               <img
                 className="lightbox__image"
                 src={activePhoto}
-                alt={`${activeAlbum.title} photo ${lightbox.photoIndex + 1}`}
+                alt={activePhotoAlt}
               />
 
               <button
@@ -527,9 +536,9 @@ function App() {
                   className={`lightbox__thumb ${
                     index === lightbox.photoIndex ? 'lightbox__thumb--active' : ''
                   }`}
-                  onClick={() => openGallery(activeAlbum.slug, index)}
+                  onClick={() => setLightbox({ albumSlug: activeAlbum.slug, photoIndex: index })}
                 >
-                  <img src={photo} alt="" />
+                  <img src={thumbnailFor(photo)} alt="" loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>

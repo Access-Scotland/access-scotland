@@ -14,6 +14,7 @@
 .admin-landscape {
   position: relative;
   min-height: 18rem;
+  background-image: var(--hero-mobile-image);
   background-position: center 44%;
   background-size: cover;
   color: var(--white);
@@ -249,6 +250,10 @@
 }
 
 @media (min-width: 760px) {
+  .admin-landscape {
+    background-image: var(--hero-image);
+  }
+
   .admin-page {
     padding: 1.5rem;
   }
