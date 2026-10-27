@@ -32,9 +32,9 @@ validation, a hidden honeypot, Cloudflare Turnstile verification, rate limits,
 duplicate detection, and delivery through Resend. The same endpoint is
 available through the Vite development server.
 
-Copy `.env.example` to `.env` for local testing, then configure the same values
-under **Netlify > Site configuration > Environment variables**. Do not commit
-real credentials.
+Use a local `.env` for testing, then configure the same values under
+**Netlify > Site configuration > Environment variables**. Do not commit real
+credentials.
 
 Required production values:
 
@@ -65,7 +65,7 @@ If the widget displays “Troubleshoot,” the form now shows the Cloudflare err
 code: `110200` means the hostname is not authorized, while `110100`, `110110`,
 or `400020` indicate a site key problem.
 
-Upstash settings in `.env.example` are optional. Without them, rate limits use
+Upstash settings are optional. Without them, rate limits use
 the Netlify Function instance's in-memory store, while Turnstile and the
 honeypot still protect the form.
 
@@ -76,9 +76,12 @@ handler are appropriate for the initial small-traffic deployment.
 ## Admin sign in
 
 The `/admin` page uses Netlify Identity for email/password login, invitations,
-password recovery, and sign-out. A Netlify Function checks the signed-in user's
-`admin` role before returning an admin session. The dashboard does not edit or
-upload photos in this static phase.
+password recovery, and sign-out. Netlify Functions check the signed-in user's
+`admin` role before showing the editor or publishing changes. Admins can edit
+site copy, partner links, contact cards, and gallery descriptions. Images and
+album files remain static and cannot be uploaded through the dashboard.
+The founder emails in the editor are public display links; the contact form's
+delivery addresses remain controlled by `CONTACT_RECIPIENT_EMAILS` in Netlify.
 
 To enable it on the client's Netlify project:
 
@@ -91,10 +94,46 @@ To enable it on the client's Netlify project:
 5. Push and deploy this code, then open `/admin`. Invitation and password-reset
    links may land on the home URL; the app routes their tokens to `/admin`.
 
-No new environment variables are needed. A normal `npm run dev` session can
-show the admin page, but it cannot authenticate without Netlify Identity's
-runtime. Test the full login flow on the deployed Netlify site after enabling
-Identity. Role changes take effect on the user's next login or token refresh.
+The sign-in itself needs no environment variables. A normal `npm run dev`
+session can show the admin page, but it cannot authenticate without Netlify
+Identity's runtime. Test the full flow on the deployed Netlify site. Role
+changes take effect on the user's next login or token refresh.
+
+### Copy publishing setup
+
+The editor stores its published JSON in a dedicated GitHub branch. Main stays
+the Netlify deploy branch, so copy edits survive future code deploys and do
+not trigger a site rebuild. The public page reads the JSON through
+`/api/content`; if GitHub is unavailable, it falls back to bundled copy.
+
+1. Create a branch named `site-content` from `main` in the client's GitHub
+   repository. Do not change Netlify's deploy branch from `main`.
+2. Create a GitHub App under the client's GitHub account. Give it **Contents:
+   Read and write** repository permission and install it on only the Access
+   Scotland repository. OAuth sign-in is not needed; Netlify Identity already
+   handles admin authentication.
+3. Add these Netlify environment variables for Functions (never prefix them
+   with `VITE_`):
+
+   ```text
+   GITHUB_APP_CLIENT_ID=the-app-client-id
+   GITHUB_APP_PRIVATE_KEY=the-app-private-key-PEM
+   GITHUB_CONTENT_REPO_OWNER=the-github-owner
+   GITHUB_CONTENT_REPO_NAME=the-repository-name
+   GITHUB_CONTENT_BRANCH=site-content
+   GITHUB_CONTENT_PATH=content/site-content.json
+   ```
+
+4. Trigger a new Netlify deploy to load the Function settings. Sign in at
+   `/admin`, make a small test edit, and select **Publish changes**. The first
+   save creates `content/site-content.json` on `site-content`. The public site
+   will then show the change on reload. The editor blocks stale drafts rather
+   than overwriting another admin's newer work.
+
+The private key may be entered with real line breaks or literal `\n` escapes.
+Keep it only in Netlify environment variables, never in GitHub or the browser.
+Without these settings, the site continues to show bundled copy and the
+editor's Publish button stays disabled.
 
 ## Static photos
 
@@ -116,8 +155,9 @@ cover from an album photo when one does not already exist, and site images to
 the three original Wix covers recovered separately.
 It also refreshes small thumbnails for every photo already in the retreat
 gallery, including the 12 additional Wix photos recovered into `public/media/`.
-When adding a new album, update `src/siteData.js` with its title, date, original
-photo count, and local paths, then rebuild and deploy. Remove any obsolete
+When adding a new album, update `src/siteData.js` with its original photo count
+and local paths, then rebuild and deploy. Its displayed title, date, and
+description can then be edited in `/admin`. Remove any obsolete
 files from `public/media/` when an album is retired; the importer does not
 delete files automatically. Photos on a public site can be viewed and saved
 by visitors.
@@ -136,4 +176,5 @@ by the account owner once no other project uses it.
   collage and opens the complete set in a lightbox.
 - Review the old Wix site later for missing photos and any other omitted content.
 - The contact form is implemented and needs the production Resend and Turnstile environment values before launch.
-- The existing sign-in remains available, but photo and copy editing require a later admin implementation.
+- Copy editing is available in `/admin` after GitHub App setup; photo upload
+  and new album creation remain a later phase.

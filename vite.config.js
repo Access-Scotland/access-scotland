@@ -1,11 +1,22 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { handleContactRequest } from './src/server/contact-handler.js'
+import { handleContentRequest } from './src/server/content-handler.js'
 
-const contactApiPlugin = () => ({
-  name: 'contact-api',
+const localApiPlugin = () => ({
+  name: 'local-apis',
   apply: 'serve',
   configureServer(server) {
+    server.middlewares.use('/api/content', async (request, response) => {
+      const webResponse = await handleContentRequest(
+        new Request('http://localhost/api/content', { method: request.method }),
+        { env: {} },
+      )
+      response.statusCode = webResponse.status
+      webResponse.headers.forEach((value, key) => response.setHeader(key, value))
+      response.end(await webResponse.text())
+    })
+
     server.middlewares.use('/api/contact', async (request, response) => {
       try {
         const chunks = []
@@ -49,6 +60,6 @@ export default defineConfig(({ mode }) => {
   })
 
   return {
-    plugins: [react(), contactApiPlugin()],
+    plugins: [react(), localApiPlugin()],
   }
 })

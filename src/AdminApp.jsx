@@ -9,6 +9,7 @@ import {
   updateUser,
 } from '@netlify/identity'
 import { brand } from './siteData'
+import AdminEditor from './AdminEditor.jsx'
 import './AdminApp.css'
 
 const authCallbackHash = /^#(confirmation_token|recovery_token|invite_token|email_change_token|access_token)=/.test(
@@ -210,7 +211,7 @@ function AdminApp() {
 
   return (
     <main className="admin-page">
-      <section className="admin-layout" aria-labelledby="admin-heading">
+      <section className={`admin-layout ${view === 'dashboard' ? 'admin-layout--editor' : ''}`} aria-labelledby="admin-heading">
         <div
           className="admin-landscape"
           style={{
@@ -230,7 +231,7 @@ function AdminApp() {
           </div>
         </div>
 
-        <div className="admin-panel">
+        <div className={`admin-panel ${view === 'dashboard' ? 'admin-panel--editor' : ''}`}>
           <a className="admin-back" href="/">← Back to the site</a>
 
           {view === 'loading' ? (
@@ -353,26 +354,7 @@ function AdminApp() {
           ) : null}
 
           {view === 'dashboard' ? (
-            <div className="admin-panel__body">
-              <p className="admin-eyebrow">Admin access active</p>
-              <h1 id="admin-heading">You are signed in.</h1>
-              <p className="admin-account">{user?.email}</p>
-              <div className="admin-next-step">
-                <span className="admin-next-step__number">01</span>
-                <div>
-                  <strong>Site management is coming later</strong>
-                  <p>Photos are currently published with the site. This sign-in is reserved for future editing tools.</p>
-                </div>
-              </div>
-              <button
-                className="admin-button admin-button--outline"
-                type="button"
-                onClick={signOut}
-                disabled={busy}
-              >
-                {busy ? 'Signing out...' : 'Sign out'}
-              </button>
-            </div>
+            <AdminEditor user={user} onSignOut={signOut} signingOut={busy} />
           ) : null}
 
           {view === 'forbidden' ? (

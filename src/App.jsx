@@ -2,18 +2,17 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import ContactForm from './components/ContactForm'
 import {
-  aboutContent,
-  albums,
-  brand,
-  founders,
-  heroHighlights,
-  missionContent,
+  aboutContent as staticAboutContent,
+  albums as staticAlbums,
+  brand as staticBrand,
+  founders as staticFounders,
+  missionContent as staticMissionContent,
   navLinks,
-  partners,
-  retreatsContent,
+  retreatsContent as staticRetreatsContent,
 } from './siteData'
+import { useSiteContent } from './content/useSiteContent.js'
 
-const retreatPhotos = [...retreatsContent.gallery, ...retreatsContent.morePhotos]
+const retreatPhotos = [...staticRetreatsContent.gallery, ...staticRetreatsContent.morePhotos]
 const retreatAlbum = {
   slug: 'retreats',
   title: 'Retreats in Scotland',
@@ -35,8 +34,23 @@ function SectionHeading({ eyebrow, title, body, align = 'left' }) {
 }
 
 function App() {
+  const content = useSiteContent()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [lightbox, setLightbox] = useState(null)
+  const brand = { ...staticBrand, ...content.brand }
+  const heroHighlights = content.hero.highlights
+  const aboutContent = { ...staticAboutContent, ...content.about }
+  const founders = content.about.founders.map((founder, index) => ({
+    ...staticFounders[index],
+    ...founder,
+  }))
+  const missionContent = { ...staticMissionContent, ...content.missions }
+  const partners = content.missions.partners
+  const retreatsContent = { ...staticRetreatsContent, ...content.retreats }
+  const albums = staticAlbums.map((album, index) => ({
+    ...album,
+    ...content.albums.entries[index],
+  }))
 
   const activeAlbum = lightbox
     ? lightbox.albumSlug === 'retreats'
@@ -179,27 +193,24 @@ function App() {
           <div className="hero-content">
             <div className="hero-brandmark">
               <img className="hero-logo" src={brand.logo} alt="" />
-              <p className="hero-overline">
-                Mission partnerships, retreats, and story-rich travel in
-                Scotland
-              </p>
+              <p className="hero-overline">{content.hero.overline}</p>
               <h1>{brand.name}</h1>
               <p className="hero-tagline">{brand.tagline}</p>
               <p className="hero-lead">{aboutContent.lead}</p>
 
               <div className="hero-actions">
                 <a className="button button--solid" href="#missions">
-                  Explore missions
+                  {content.hero.missionsButton}
                 </a>
                 <a className="button button--ghost" href="#albums">
-                  Browse galleries
+                  {content.hero.albumsButton}
                 </a>
               </div>
             </div>
 
             <div className="hero-rail">
-              {heroHighlights.map((item) => (
-                <article key={item.title} className="hero-card">
+              {heroHighlights.map((item, index) => (
+                <article key={index} className="hero-card">
                   <p className="section-eyebrow">{item.title}</p>
                   <p>{item.description}</p>
                 </article>
@@ -213,7 +224,7 @@ function App() {
             <SectionHeading
               eyebrow={aboutContent.eyebrow}
               title={aboutContent.title}
-              body="The information stays intact here, but the reading flow is tightened up for mobile and the founder details sit in a cleaner, more balanced layout."
+              body={content.about.intro}
             />
 
             <div className="about-layout">
@@ -228,16 +239,16 @@ function App() {
 
                 <div className="story-card__body">
                   <p className="story-card__lead">{aboutContent.lead}</p>
-                  {aboutContent.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
+                  {aboutContent.paragraphs.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
                   ))}
                 </div>
               </article>
 
               <aside className="founders-panel">
                 <div className="founders-grid">
-                  {founders.map((founder) => (
-                    <article key={founder.email} className="founder-card">
+                  {founders.map((founder, index) => (
+                    <article key={index} className="founder-card">
                       <img
                         src={founder.image}
                         alt={founder.name}
@@ -263,23 +274,23 @@ function App() {
             <SectionHeading
               eyebrow={missionContent.eyebrow}
               title={missionContent.title}
-              body="The fuller mission story from the original site is restored here, then broken into clearer blocks so it reads comfortably on phones and stays legible across the page."
+              body={content.missions.intro}
             />
 
             <div className="mission-frame">
               <article className="mission-story-card">
-                {missionContent.paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                {missionContent.paragraphs.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
                 ))}
               </article>
 
               <div className="mission-sidebar">
                 <aside className="mission-highlights">
                   <p className="section-eyebrow">What this includes</p>
-                  <h3>How the work takes shape on the ground.</h3>
+                  <h3>{content.missions.highlightsTitle}</h3>
                   <ul>
-                    {missionContent.highlights.map((highlight) => (
-                      <li key={highlight}>{highlight}</li>
+                    {missionContent.highlights.map((highlight, index) => (
+                      <li key={index}>{highlight}</li>
                     ))}
                   </ul>
                 </aside>
@@ -288,9 +299,9 @@ function App() {
                   <p className="section-eyebrow">
                     {missionContent.invitationTitle}
                   </p>
-                  <h3>Trips can be tailored to the gifts your team brings.</h3>
-                  {missionContent.invitationBody.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
+                  <h3>{content.missions.invitationHeading}</h3>
+                  {missionContent.invitationBody.map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
                   ))}
                 </aside>
               </div>
@@ -299,18 +310,14 @@ function App() {
             <div className="partner-section">
               <div className="partner-section__copy">
                 <p className="section-eyebrow">Meet our partners</p>
-                <h3>Churches and organizations already connected to the work.</h3>
-                <p>
-                  These relationships stay visible in the new build so the
-                  mission network feels just as tangible as it does on the
-                  existing site.
-                </p>
+                <h3>{content.missions.partnersTitle}</h3>
+                <p>{content.missions.partnersIntro}</p>
               </div>
 
               <div className="partner-grid">
-                {partners.map((partner) => (
+                {partners.map((partner, index) => (
                   <a
-                    key={partner.name}
+                    key={index}
                     className="partner-card"
                     href={partner.href}
                     target="_blank"
@@ -334,12 +341,12 @@ function App() {
             <div className="retreat-hero">
               <article className="retreat-overview">
                 <p className="section-eyebrow">Build the rhythm</p>
-                <h3>Plan a retreat that feels intentional instead of pieced together.</h3>
+                <h3>{content.retreats.overviewTitle}</h3>
                 <p>{retreatsContent.itineraryIntro}</p>
 
                 <div className="activity-grid">
-                  {retreatsContent.activities.map((activity) => (
-                    <span key={activity} className="activity-pill">
+                  {retreatsContent.activities.map((activity, index) => (
+                    <span key={index} className="activity-pill">
                       {activity}
                     </span>
                   ))}
@@ -347,8 +354,8 @@ function App() {
               </article>
 
               <div className="retreat-modes">
-                {retreatsContent.offerings.map((offering) => (
-                  <article key={offering.title} className="retreat-mode">
+                {retreatsContent.offerings.map((offering, index) => (
+                  <article key={index} className="retreat-mode">
                     <p className="section-eyebrow">{offering.title}</p>
                     <p>{offering.description}</p>
                   </article>
@@ -381,11 +388,11 @@ function App() {
 
               <aside className="retreat-destinations">
                 <p className="section-eyebrow">Highlights</p>
-                <h3>Landmarks and landscapes that can anchor the itinerary.</h3>
+                <h3>{content.retreats.highlightsTitle}</h3>
 
                 <div className="destination-grid">
-                  {retreatsContent.highlights.map((highlight) => (
-                    <span key={highlight} className="destination-card">
+                  {retreatsContent.highlights.map((highlight, index) => (
+                    <span key={index} className="destination-card">
                       {highlight}
                     </span>
                   ))}
@@ -397,8 +404,8 @@ function App() {
           <section className="content-section albums-section" id="albums">
             <SectionHeading
               eyebrow="Albums"
-              title="Moments from the journey, gathered in one place."
-              body="Explore the galleries below. New albums can be added as more stories unfold."
+              title={content.albums.title}
+              body={content.albums.intro}
               align="center"
             />
 
@@ -444,24 +451,21 @@ function App() {
       <footer className="site-footer" id="contact">
         <div className="site-footer__intro">
           <p className="section-eyebrow">Contact Access Scotland</p>
-          <h2>Start a conversation about Scotland.</h2>
-          <p>
-            Whether you are exploring a mission partnership, planning a retreat,
-            or simply want to learn more, we would be glad to hear from you.
-          </p>
+          <h2>{content.footer.title}</h2>
+          <p>{content.footer.intro}</p>
         </div>
 
         <ContactForm />
 
         <div className="site-footer__contacts">
           <p className="section-eyebrow">Contact</p>
-          {founders.map((founder) => (
-            <a key={founder.email} href={`mailto:${founder.email}`}>
+          {founders.map((founder, index) => (
+            <a key={index} href={`mailto:${founder.email}`}>
               <strong>{founder.name}</strong>
               <span>{founder.role}</span>
             </a>
           ))}
-          <p className="site-footer__copyright">© 2022 Access Scotland.</p>
+          <p className="site-footer__copyright">{content.footer.copyright}</p>
           <a className="site-footer__admin-link" href="/admin">
             Admin sign in
           </a>

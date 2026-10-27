@@ -1,0 +1,101 @@
+export const editorSections = [
+  {
+    id: 'hero',
+    title: 'Hero',
+    description: 'Site name, opening message, buttons, and the three highlight cards.',
+    fields: [
+      { path: 'brand.name', label: 'Site name' },
+      { path: 'brand.tagline', label: 'Tagline' },
+      { path: 'hero.overline', label: 'Opening line', multiline: true },
+      { path: 'hero.missionsButton', label: 'Missions button' },
+      { path: 'hero.albumsButton', label: 'Galleries button' },
+      { path: 'hero.highlights', label: 'Highlight cards', kind: 'records', fixed: true, itemFields: [
+        { key: 'title', label: 'Title' },
+        { key: 'description', label: 'Description', multiline: true },
+      ] },
+    ],
+  },
+  {
+    id: 'about',
+    title: 'About',
+    description: 'About section copy and the two contact cards. Photos remain static.',
+    fields: [
+      { path: 'about.eyebrow', label: 'Section label' },
+      { path: 'about.title', label: 'Heading', multiline: true },
+      { path: 'about.intro', label: 'Section introduction', multiline: true },
+      { path: 'about.lead', label: 'Main statement', multiline: true },
+      { path: 'about.paragraphs', label: 'Story paragraphs', kind: 'list', multiline: true },
+      { path: 'about.founders', label: 'Contact cards', kind: 'records', fixed: true, itemFields: [
+        { key: 'name', label: 'Name' },
+        { key: 'role', label: 'Title' },
+        { key: 'email', label: 'Public email (not contact-form routing)', inputType: 'email' },
+      ] },
+    ],
+  },
+  {
+    id: 'missions',
+    title: 'Missions',
+    description: 'Mission story, invitation, and partner links.',
+    fields: [
+      { path: 'missions.eyebrow', label: 'Section label' },
+      { path: 'missions.title', label: 'Heading', multiline: true },
+      { path: 'missions.intro', label: 'Section introduction', multiline: true },
+      { path: 'missions.paragraphs', label: 'Mission story paragraphs', kind: 'list', multiline: true },
+      { path: 'missions.highlightsTitle', label: 'Highlights heading' },
+      { path: 'missions.highlights', label: 'Highlights', kind: 'list' },
+      { path: 'missions.invitationTitle', label: 'Invitation label' },
+      { path: 'missions.invitationHeading', label: 'Invitation heading' },
+      { path: 'missions.invitationBody', label: 'Invitation paragraphs', kind: 'list', multiline: true },
+      { path: 'missions.partnersTitle', label: 'Partners heading' },
+      { path: 'missions.partnersIntro', label: 'Partners introduction', multiline: true },
+      { path: 'missions.partners', label: 'Partners', kind: 'records', itemFields: [
+        { key: 'name', label: 'Name' },
+        { key: 'place', label: 'Location' },
+        { key: 'href', label: 'Website', inputType: 'url' },
+      ], newItem: { name: '', place: '', href: '' } },
+    ],
+  },
+  {
+    id: 'retreats',
+    title: 'Retreats',
+    description: 'Retreat offerings, activity lists, and destinations.',
+    fields: [
+      { path: 'retreats.eyebrow', label: 'Section label' },
+      { path: 'retreats.title', label: 'Heading', multiline: true },
+      { path: 'retreats.lead', label: 'Introduction', multiline: true },
+      { path: 'retreats.overviewTitle', label: 'Overview heading' },
+      { path: 'retreats.itineraryIntro', label: 'Itinerary introduction', multiline: true },
+      { path: 'retreats.activities', label: 'Activities', kind: 'list' },
+      { path: 'retreats.offerings', label: 'Retreat types', kind: 'records', fixed: true, itemFields: [
+        { key: 'title', label: 'Title' },
+        { key: 'description', label: 'Description', multiline: true },
+      ] },
+      { path: 'retreats.highlightsTitle', label: 'Destinations heading' },
+      { path: 'retreats.highlights', label: 'Destinations', kind: 'list' },
+    ],
+  },
+  {
+    id: 'albums',
+    title: 'Albums',
+    description: 'Gallery titles, dates, and descriptions. Photos remain static.',
+    fields: [
+      { path: 'albums.title', label: 'Section heading', multiline: true },
+      { path: 'albums.intro', label: 'Section introduction', multiline: true },
+      { path: 'albums.entries', label: 'Album cards', kind: 'records', fixed: true, itemFields: [
+        { key: 'title', label: 'Title' },
+        { key: 'date', label: 'Date' },
+        { key: 'summary', label: 'Description', multiline: true },
+      ] },
+    ],
+  },
+  {
+    id: 'footer',
+    title: 'Contact',
+    description: 'Closing contact message and copyright line.',
+    fields: [
+      { path: 'footer.title', label: 'Heading' },
+      { path: 'footer.intro', label: 'Introduction', multiline: true },
+      { path: 'footer.copyright', label: 'Copyright line' },
+    ],
+  },
+]
