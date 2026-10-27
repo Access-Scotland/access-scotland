@@ -33,8 +33,25 @@ function SectionHeading({ eyebrow, title, body, align = 'left' }) {
   )
 }
 
-function App() {
-  const content = useSiteContent()
+function EditSectionButton({ admin, sectionId, label }) {
+  if (!admin || admin.mode !== 'edit') return null
+
+  return (
+    <div className="inline-edit-anchor">
+      <button type="button" className="inline-edit-trigger" onClick={() => admin.openEditor(sectionId)} aria-label={`Edit ${label} section`}>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z" />
+        </svg>
+        <span>Edit</span>
+      </button>
+    </div>
+  )
+}
+
+function App({ admin = null }) {
+  const liveContent = useSiteContent()
+  const content = admin?.content ?? liveContent
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [lightbox, setLightbox] = useState(null)
   const brand = { ...staticBrand, ...content.brand }
@@ -191,6 +208,7 @@ function App() {
           <div className="hero-haze"></div>
 
           <div className="hero-content">
+            <EditSectionButton admin={admin} sectionId="hero" label="hero" />
             <div className="hero-brandmark">
               <img className="hero-logo" src={brand.logo} alt="" />
               <p className="hero-overline">{content.hero.overline}</p>
@@ -221,6 +239,7 @@ function App() {
 
         <div className="content-stack">
           <section className="content-section" id="about">
+            <EditSectionButton admin={admin} sectionId="about" label="About" />
             <SectionHeading
               eyebrow={aboutContent.eyebrow}
               title={aboutContent.title}
@@ -271,6 +290,7 @@ function App() {
           </section>
 
           <section className="content-section content-section--mission" id="missions">
+            <EditSectionButton admin={admin} sectionId="missions" label="Missions" />
             <SectionHeading
               eyebrow={missionContent.eyebrow}
               title={missionContent.title}
@@ -332,6 +352,7 @@ function App() {
           </section>
 
           <section className="content-section" id="retreats">
+            <EditSectionButton admin={admin} sectionId="retreats" label="Retreats" />
             <SectionHeading
               eyebrow={retreatsContent.eyebrow}
               title={retreatsContent.title}
@@ -402,6 +423,7 @@ function App() {
           </section>
 
           <section className="content-section albums-section" id="albums">
+            <EditSectionButton admin={admin} sectionId="albums" label="Albums" />
             <SectionHeading
               eyebrow="Albums"
               title={content.albums.title}
@@ -449,6 +471,7 @@ function App() {
       </main>
 
       <footer className="site-footer" id="contact">
+        <EditSectionButton admin={admin} sectionId="footer" label="Contact" />
         <div className="site-footer__intro">
           <p className="section-eyebrow">Contact Access Scotland</p>
           <h2>{content.footer.title}</h2>

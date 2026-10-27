@@ -9,7 +9,6 @@ import {
   updateUser,
 } from '@netlify/identity'
 import { brand } from './siteData'
-import AdminEditor from './AdminEditor.jsx'
 import './AdminApp.css'
 
 const authCallbackHash = /^#(confirmation_token|recovery_token|invite_token|email_change_token|access_token)=/.test(
@@ -39,7 +38,6 @@ const checkAdminSession = async () => {
 
 function AdminApp() {
   const [view, setView] = useState('loading')
-  const [user, setUser] = useState(null)
   const [inviteToken, setInviteToken] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -80,8 +78,11 @@ function AdminApp() {
 
         const session = await checkAdminSession()
         if (cancelled) return
+        if (session.view === 'dashboard') {
+          window.location.replace('/?admin=1')
+          return
+        }
         setView(session.view)
-        setUser(session.user || null)
       } catch (error) {
         if (cancelled) return
         setView('login')
@@ -101,8 +102,11 @@ function AdminApp() {
   }, [])
 
   const applySession = (session) => {
+    if (session.view === 'dashboard') {
+      window.location.replace('/?admin=1')
+      return
+    }
     setView(session.view)
-    setUser(session.user || null)
     setNotice(
       session.view === 'forbidden'
         ? {
@@ -195,7 +199,6 @@ function AdminApp() {
 
     try {
       await logout()
-      setUser(null)
       setView('login')
       setEmail('')
       setPassword('')
@@ -211,7 +214,7 @@ function AdminApp() {
 
   return (
     <main className="admin-page">
-      <section className={`admin-layout ${view === 'dashboard' ? 'admin-layout--editor' : ''}`} aria-labelledby="admin-heading">
+      <section className="admin-layout" aria-labelledby="admin-heading">
         <div
           className="admin-landscape"
           style={{
@@ -231,7 +234,7 @@ function AdminApp() {
           </div>
         </div>
 
-        <div className={`admin-panel ${view === 'dashboard' ? 'admin-panel--editor' : ''}`}>
+        <div className="admin-panel">
           <a className="admin-back" href="/">← Back to the site</a>
 
           {view === 'loading' ? (
@@ -351,10 +354,6 @@ function AdminApp() {
                 </button>
               </form>
             </div>
-          ) : null}
-
-          {view === 'dashboard' ? (
-            <AdminEditor user={user} onSignOut={signOut} signingOut={busy} />
           ) : null}
 
           {view === 'forbidden' ? (

@@ -125,10 +125,13 @@ not trigger a site rebuild. The public page reads the JSON through
    ```
 
 4. Trigger a new Netlify deploy to load the Function settings. Sign in at
-   `/admin`, make a small test edit, and select **Publish changes**. The first
-   save creates `content/site-content.json` on `site-content`. The public site
-   will then show the change on reload. The editor blocks stale drafts rather
-   than overwriting another admin's newer work.
+   `/admin`, then use the pencil on a page section to edit its copy in the
+   side panel. Changes preview on the page but remain a draft until you select
+   **Publish changes**. **View mode** hides the pencils and shows the published
+   copy; **Edit mode** returns to the draft. The first publish creates
+   `content/site-content.json` on `site-content`. The public site shows the
+   change on reload. The editor blocks stale drafts rather than overwriting
+   another admin's newer work.
 
 The private key may be entered with real line breaks or literal `\n` escapes.
 Keep it only in Netlify environment variables, never in GitHub or the browser.
