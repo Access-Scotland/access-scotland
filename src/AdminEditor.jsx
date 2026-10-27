@@ -15,6 +15,15 @@ const setAt = (object, path, value) => {
   parent[last] = value
 }
 
+const loadPublishedContent = async () => {
+  const response = await fetch('/api/content', { cache: 'no-store' })
+  if (!response.ok) {
+    throw new Error(`Published content is unavailable (${response.status}). Check the Netlify content function logs, then retry.`)
+  }
+  const result = await response.json()
+  return { ...result, content: parseSiteContent(result.content) }
+}
+
 function TextControl({ label, value, onChange, multiline, inputType = 'text' }) {
   return (
     <label className="editor-field">
@@ -90,9 +99,11 @@ function AdminEditor() {
   const [published, setPublished] = useState(() => clone(defaultSiteContent))
   const [revision, setRevision] = useState(null)
   const [configured, setConfigured] = useState(false)
+  const [contentAvailable, setContentAvailable] = useState(false)
   const [mode, setMode] = useState('edit')
   const [sectionId, setSectionId] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [reloading, setReloading] = useState(false)
   const [notice, setNotice] = useState(null)
   const closeButtonRef = useRef(null)
   const drawerRef = useRef(null)
@@ -119,16 +130,21 @@ function AdminEditor() {
           throw new Error('Admin sign in is unavailable. Please try again.')
         }
         const session = await sessionResponse.json()
-        const contentResponse = await fetch('/api/content', { cache: 'no-store' })
-        if (!contentResponse.ok) throw new Error('Could not load published content.')
-        const result = await contentResponse.json()
         if (cancelled) return
-        const next = parseSiteContent(result.content)
         setUser(session.user)
-        setDraft(clone(next))
-        setPublished(clone(next))
-        setRevision(result.revision)
-        setConfigured(Boolean(result.persistenceConfigured))
+        try {
+          const result = await loadPublishedContent()
+          if (cancelled) return
+          setDraft(clone(result.content))
+          setPublished(clone(result.content))
+          setRevision(result.revision)
+          setConfigured(Boolean(result.persistenceConfigured))
+          setContentAvailable(true)
+        } catch (error) {
+          if (cancelled) return
+          setMode('view')
+          setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Could not load published content.' })
+        }
         setStatus('ready')
       } catch (error) {
         if (cancelled) return
@@ -190,7 +206,7 @@ function AdminEditor() {
   })
 
   const save = async () => {
-    if (!dirty || !configured || saving) return
+    if (!dirty || !configured || !contentAvailable || saving) return
     setNotice(null)
     let validated
     try {
@@ -222,19 +238,22 @@ function AdminEditor() {
   }
 
   const reload = async () => {
+    if (reloading) return
     if (dirty && !window.confirm('Discard your unsaved edits and reload published content?')) return
     setNotice(null)
+    setReloading(true)
     try {
-      const response = await fetch('/api/content', { cache: 'no-store' })
-      if (!response.ok) throw new Error('Could not reload published content.')
-      const result = await response.json()
-      const next = parseSiteContent(result.content)
-      setDraft(clone(next))
-      setPublished(clone(next))
+      const result = await loadPublishedContent()
+      setDraft(clone(result.content))
+      setPublished(clone(result.content))
       setRevision(result.revision)
       setConfigured(Boolean(result.persistenceConfigured))
+      setContentAvailable(true)
+      setMode('edit')
     } catch (error) {
       setNotice({ tone: 'error', text: error instanceof Error ? error.message : 'Could not reload published content.' })
+    } finally {
+      setReloading(false)
     }
   }
 
@@ -276,15 +295,19 @@ function AdminEditor() {
       <div className="inline-admin-toolbar" aria-label="Admin controls">
         <div className="inline-admin-toolbar__identity">
           <strong>Admin mode</strong>
-          <span>{dirty ? 'Unpublished changes' : `Signed in as ${user?.email}`}</span>
+          <span>{!contentAvailable ? 'View only: showing bundled copy' : dirty ? 'Unpublished changes' : `Signed in as ${user?.email}`}</span>
         </div>
         <div className="inline-admin-toolbar__actions">
-          <button type="button" className="inline-admin-toolbar__mode" onClick={() => { setMode(mode === 'edit' ? 'view' : 'edit'); setSectionId(null) }}>
+          <button type="button" className="inline-admin-toolbar__mode" disabled={!contentAvailable} onClick={() => { setMode(mode === 'edit' ? 'view' : 'edit'); setSectionId(null) }}>
             {mode === 'edit' ? 'View mode' : 'Edit mode'}
           </button>
-          <button type="button" className="inline-admin-toolbar__publish" disabled={!dirty || !configured || saving} onClick={save}>
-            {saving ? 'Publishing...' : 'Publish changes'}
-          </button>
+          {contentAvailable ? (
+            <button type="button" className="inline-admin-toolbar__publish" disabled={!dirty || !configured || saving} onClick={save}>
+              {saving ? 'Publishing...' : 'Publish changes'}
+            </button>
+          ) : (
+            <button type="button" className="inline-admin-toolbar__publish" disabled={reloading} onClick={reload}>{reloading ? 'Retrying...' : 'Retry content'}</button>
+          )}
           <button type="button" className="inline-admin-toolbar__exit" onClick={signOut}>Sign out</button>
         </div>
         {notice ? <p className={`inline-admin-toolbar__notice inline-admin-toolbar__notice--${notice.tone}`} role="status">{notice.text}</p> : null}
@@ -315,7 +338,7 @@ function AdminEditor() {
               <p>{dirty ? 'Changes are only a draft until you publish.' : 'This matches the published site.'}</p>
               <div className="inline-editor-drawer__actions">
                 <button type="button" className="editor-small-button" disabled={!dirty || saving} onClick={() => { setDraft(clone(published)); setNotice(null) }}>Discard draft</button>
-                <button type="button" className="editor-small-button" disabled={saving} onClick={reload}>Reload published</button>
+                <button type="button" className="editor-small-button" disabled={saving || reloading} onClick={reload}>{reloading ? 'Reloading...' : 'Reload published'}</button>
                 <button type="button" className="admin-button" disabled={!dirty || !configured || saving} onClick={save}>{saving ? 'Publishing...' : 'Publish changes'}</button>
               </div>
             </footer>
